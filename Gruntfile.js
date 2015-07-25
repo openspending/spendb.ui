@@ -71,7 +71,8 @@ module.exports = function(grunt) {
       app: {
         options: {
           paths: ["less"],
-          strictImports: true
+          strictImports: true,
+          relativeUrls: false
         },
         files: {
           "build/style.css": ["style/base.less"]
@@ -79,14 +80,24 @@ module.exports = function(grunt) {
       }
     },
     aws_s3: {
-      assets: {
+      versioned: {
         options: {
           bucket: '<%= pkg.deployBucket %>',
           region: 'eu-west-1',
           uploadConcurrency: 5
         },
         files: [
-          {expand: true, cwd: '.', src: ['build/**', 'src/**', '*.html'], dest: '/<%= pkg.deployBase %>/<%= pkg.version %>'},
+          {expand: true, cwd: '.', src: ['build/**', 'img/**'], dest: '/<%= pkg.deployBase %>/<%= pkg.version %>'},
+        ]
+      },
+      latest: {
+        options: {
+          bucket: '<%= pkg.deployBucket %>',
+          region: 'eu-west-1',
+          uploadConcurrency: 5
+        },
+        files: [
+          {expand: true, cwd: '.', src: ['build/**', 'img/**'], dest: '/<%= pkg.deployBase %>/latest'},
         ]
       }
     },

@@ -1,0 +1,11 @@
+language: python
+install:
+  - sudo apt-get install python-software-properties
+  - sudo apt-add-repository -y ppa:chris-lea/node.js
+  - sudo apt-get update
+  - sudo apt-get install nodejs rubygems
+  - sudo npm config set registry http://registry.npmjs.org/
+  - npm install
+  - bower install
+script:
+  - karma start --single-run --browsers PhantomJS karma.conf.js

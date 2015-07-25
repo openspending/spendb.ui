@@ -1,6 +1,7 @@
 angular.module('spendb.config', []).constant('config', SPENDB_CONFIG);
 
-var spendb = angular.module('spendb', ['spendb.config', 'ngCookies', 'ngRoute', 'angular.filter', 'duScroll',
+var spendb = angular.module('spendb', ['spendb.config', 'spendb.templates', 'ngCookies',
+                                       'ngRoute', 'angular.filter', 'duScroll',
                                        'ngFileUpload', 'ui.bootstrap', 'ui.select', 'ngBabbage']);
 
 
