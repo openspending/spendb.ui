@@ -36,6 +36,16 @@ var loadManagers = ['$route', '$http', '$q', function($route, $http, $q) {
 }];
 
 
+var loadSources = ['$route', '$http', '$q', function($route, $http, $q) {
+  var dfd = $q.defer(),
+      url = '/api/3/datasets/' + $route.current.params.dataset + '/sources';
+  $http.get(url).then(function(res) {
+    dfd.resolve(res.data);
+  });
+  return dfd.promise;
+}];
+
+
 var loadReferenceData = ['$q', 'data', function($q, data) {
   var dfd = $q.defer();
   data.get(function(rd) {

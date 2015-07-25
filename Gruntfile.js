@@ -4,6 +4,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-contrib-connect');
   grunt.loadNpmTasks('grunt-contrib-concat');
+  grunt.loadNpmTasks('grunt-contrib-cssmin');
   grunt.loadNpmTasks('grunt-html2js');
   grunt.loadNpmTasks('grunt-aws-s3');
 
@@ -79,6 +80,14 @@ module.exports = function(grunt) {
         }
       }
     },
+    cssmin: {
+      app: {
+        options: {},
+        files: {
+          "build/style.min.css": ["build/style.css"]
+        }
+      }
+    },
     aws_s3: {
       versioned: {
         options: {
@@ -112,12 +121,12 @@ module.exports = function(grunt) {
       },
       style: {
         files: ['style/**/*.less'],
-        tasks: ['less']
+        tasks: ['less', 'cssmin']
       },
     }
   });
 
-  grunt.registerTask('default', ['less', 'html2js', 'concat', 'uglify']);
+  grunt.registerTask('default', ['less', 'html2js', 'concat', 'uglify', 'cssmin']);
   grunt.registerTask('deploy', ['aws_s3']);
   grunt.registerTask('server', ['connect', 'watch'])
 };

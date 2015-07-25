@@ -84,6 +84,7 @@ spendb.config(['$routeProvider', '$locationProvider',
       dataset: loadDataset,
       managers: loadManagers,
       model: loadModel,
+      sources: loadSources,
       reference: loadReferenceData
     }
   });
@@ -364,18 +365,14 @@ spendb.controller('DatasetCtrl', ['$scope', '$rootScope', '$http', '$modal', 'co
 
 }]);
 ;
-spendb.controller('DatasetAboutCtrl', ['$scope', '$location', '$http', 'dataset', 'model', 'managers', 'config', 'reference',
-    function($scope, $location, $http, dataset, model, managers, config, reference) {
+spendb.controller('DatasetAboutCtrl', ['$scope', '$location', '$http', 'dataset', 'model', 'managers', 'sources', 'config', 'reference',
+    function($scope, $location, $http, dataset, model, managers, sources, config, reference) {
   $scope.setTitle(dataset.label);
   $scope.dataset = dataset;
   $scope.managers = managers;
   $scope.model = model.model;
   $scope.config = config;
-  $scope.sources = {};
-
-  $http.get(dataset.api_url + '/sources').then(function(res) {
-    $scope.sources = res.data;
-  });
+  $scope.sources = sources;
 
   $scope.getReferenceLabel = function(list, code) {
     for (var i in reference[list]) {
@@ -386,7 +383,7 @@ spendb.controller('DatasetAboutCtrl', ['$scope', '$location', '$http', 'dataset'
     }
     return code;
   };
-  
+
 }]);
 ;
 spendb.controller('DatasetDeleteCtrl', ['$scope', '$modalInstance', '$window', '$location', '$http', 'dataset',
@@ -1490,6 +1487,16 @@ var loadDataset = ['$route', '$http', '$q', function($route, $http, $q) {
 var loadManagers = ['$route', '$http', '$q', function($route, $http, $q) {
   var dfd = $q.defer(),
       url = '/api/3/datasets/' + $route.current.params.dataset + '/managers';
+  $http.get(url).then(function(res) {
+    dfd.resolve(res.data);
+  });
+  return dfd.promise;
+}];
+
+
+var loadSources = ['$route', '$http', '$q', function($route, $http, $q) {
+  var dfd = $q.defer(),
+      url = '/api/3/datasets/' + $route.current.params.dataset + '/sources';
   $http.get(url).then(function(res) {
     dfd.resolve(res.data);
   });
