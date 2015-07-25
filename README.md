@@ -1,2 +1,8 @@
 # spendb.ui
-User interface application component for SpenDB
+
+This is the user interface to SpenDB, based on AngularJS. The backend
+API of SpenDB is required to properly run this application.
+
+This is a JavaScript project based on Grunt, Bower and all the other
+fancy hipster tools. You must have at least Node.js installed before
+you can develop this library.
