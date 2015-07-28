@@ -31,6 +31,7 @@ module.exports = function(grunt) {
           'build/vendor.js': [
             'bower_components/d3/d3.js',
             'bower_components/d3-plugins/sankey/sankey.js',
+            'bower_components/c3js-chart/c3.js',
             'bower_components/angular/angular.js',
             'bower_components/angular-route/angular-route.js',
             'bower_components/angular-scroll/angular-scroll.js',
