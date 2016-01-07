@@ -1,6 +1,6 @@
 
-spendb.controller('AccountResetCtrl', ['$scope', '$modalInstance', '$window', '$location', '$http',
-  function($scope, $modalInstance, $window, $location, $http) {
+spendb.controller('AccountResetCtrl', ['$scope', '$modalInstance', '$window', '$location', '$http', 'config',
+  function($scope, $modalInstance, $window, $location, $http, config) {
 
   $scope.data = {};
   $scope.res = {};
@@ -12,7 +12,7 @@ spendb.controller('AccountResetCtrl', ['$scope', '$modalInstance', '$window', '$
 
   $scope.send = function() {
     $scope.sent = true;
-    $http.post('/api/3/reset', $scope.data).then(function(res) {
+    $http.post(config.apiBaseUrl + '/api/3/reset', $scope.data).then(function(res) {
       $scope.res = res.data;
     }, function(res) {
       $scope.res = res.data;

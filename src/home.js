@@ -1,17 +1,17 @@
 
-var loadIndex = ['$q', '$route', '$http', function($q, $route, $http) {
+var loadIndex = ['$q', '$route', '$http', 'config', function($q, $route, $http, config) {
   var dfd = $q.defer();
   // yes that's what baby jesus made APIs for.
-  $http.get('/api/3/pages/index.html').then(function(res) {
+  $http.get(config.apiBaseUrl + '/api/3/pages/index.html').then(function(res) {
     dfd.resolve(res.data);
   });
   return dfd.promise;
 }];
 
 
-var loadIndexDatasets = ['$q', '$http', '$location', '$route', function($q, $http, $location, $route) {
+var loadIndexDatasets = ['$q', '$http', '$location', '$route', 'config', function($q, $http, $location, $route, config) {
   var dfd = $q.defer();
-  $http.get('/api/3/datasets', {params: $location.search()}).then(function(res) {
+  $http.get(config.apiBaseUrl + '/api/3/datasets', {params: $location.search()}).then(function(res) {
     dfd.resolve(res.data);
   });
   return dfd.promise;
