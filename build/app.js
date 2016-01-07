@@ -5,6 +5,11 @@ var spendb = angular.module('spendb', ['spendb.config', 'spendb.templates', 'ngC
                                        'ngFileUpload', 'ui.bootstrap', 'ui.select', 'ngBabbage']);
 
 
+spendb.constant('config', {
+   appName: 'SpenDB',
+   appVersion: 1.0,
+   apiBaseUrl: ''
+});
 spendb.config(['$routeProvider', '$locationProvider',
     function($routeProvider, $locationProvider) {
 
@@ -205,9 +210,9 @@ spendb.controller('AppCtrl', ['$scope', '$rootScope', '$location', '$http', '$co
 }]);
 
 
-var loadPage = ['$q', '$route', '$http', function($q, $route, $http) {
+var loadPage = ['$q', '$route', '$http', 'config', function($q, $route, $http, config) {
   var dfd = $q.defer();
-  $http.get('/api/3/pages/' + $route.current.params.path).then(function(res) {
+  $http.get(config.apiBaseUrl+'/api/3/pages/' + $route.current.params.path).then(function(res) {
     dfd.resolve(res.data);
   });
   return dfd.promise;
@@ -220,8 +225,8 @@ spendb.controller('DocsCtrl', ['$scope', '$sce', 'page', function($scope, $sce, 
   $scope.page_html = $sce.trustAsHtml('' + page.html);
 }]);
 ;
-spendb.controller('AccountLoginCtrl', ['$scope', '$modal', '$http', '$location', 'validation', 'session',
-  function($scope, $modal, $http, $location, validation, session) {
+spendb.controller('AccountLoginCtrl', ['$scope', '$modal', '$http', '$location', 'validation', 'session', 'config',
+  function($scope, $modal, $http, $location, validation, session, config) {
   $scope.setTitle("Login and registration");
 
   $scope.credentials = {};
@@ -230,14 +235,14 @@ spendb.controller('AccountLoginCtrl', ['$scope', '$modal', '$http', '$location',
   $scope.login = function(form) {
     var cred = angular.copy($scope.credentials);
     $scope.credentials.password = '';
-    $http.post('/api/3/sessions/login', cred).then(function(res) {
+    $http.post(config.apiBaseUrl + '/api/3/sessions/login', cred).then(function(res) {
       session.flush();
       $location.path('/accounts/' + $scope.credentials.login);
     }, validation.handle(form));
   };
 
   $scope.register = function(form) {
-    $http.post('/api/3/accounts', $scope.account).then(function(res) {
+    $http.post(config.apiBaseUrl + '/api/3/accounts', $scope.account).then(function(res) {
       session.flush();
       $location.path('/accounts/' + $scope.account.name);
     }, validation.handle(form));
@@ -254,14 +259,14 @@ spendb.controller('AccountLoginCtrl', ['$scope', '$modal', '$http', '$location',
 
 }]);
 ;
-var loadProfile = ['$q', '$http', '$location', '$route', function($q, $http, $location, $route) {
-  var url = '/api/3/accounts/' + $route.current.params.account,
+var loadProfile = ['$q', '$http', '$location', '$route', 'config', function($q, $http, $location, $route, config) {
+  var url = config.apiBaseUrl + '/api/3/accounts/' + $route.current.params.account,
       dfd = $q.defer(),
       account = $route.current.params.account,
       params = angular.extend({}, $location.search(), {account: account});
   $q.all([
-    $http.get('/api/3/accounts/' + account),
-    $http.get('/api/3/datasets', {params: params})
+    $http.get(config.apiBaseUrl + '/api/3/accounts/' + account),
+    $http.get(config.apiBaseUrl + '/api/3/datasets', {params: params})
   ]).then(function(data) {
     dfd.resolve({
       account: data[0].data,
@@ -285,8 +290,8 @@ spendb.controller('AccountProfileCtrl', ['$scope', '$http', '$location', 'sessio
 
 }]);
 ;
-spendb.controller('AccountResetCtrl', ['$scope', '$modalInstance', '$window', '$location', '$http',
-  function($scope, $modalInstance, $window, $location, $http) {
+spendb.controller('AccountResetCtrl', ['$scope', '$modalInstance', '$window', '$location', '$http', 'config',
+  function($scope, $modalInstance, $window, $location, $http, config) {
 
   $scope.data = {};
   $scope.res = {};
@@ -298,7 +303,7 @@ spendb.controller('AccountResetCtrl', ['$scope', '$modalInstance', '$window', '$
 
   $scope.send = function() {
     $scope.sent = true;
-    $http.post('/api/3/reset', $scope.data).then(function(res) {
+    $http.post(config.apiBaseUrl + '/api/3/reset', $scope.data).then(function(res) {
       $scope.res = res.data;
     }, function(res) {
       $scope.res = res.data;
@@ -308,10 +313,10 @@ spendb.controller('AccountResetCtrl', ['$scope', '$modalInstance', '$window', '$
 
 }]);
 ;
-var loadSessionAccount = ['$q', '$http', 'session', function($q, $http, session) {
+var loadSessionAccount = ['$q', '$http', 'session', 'config', function($q, $http, session, config) {
   var dfd = $q.defer();
   session.get(function(s) {
-    $http.get('/api/3/accounts/' + s.user.name).then(function(res) {
+    $http.get(config.apiBaseUrl + '/api/3/accounts/' + s.user.name).then(function(res) {
       dfd.resolve(res.data);
     });
   });
@@ -751,8 +756,8 @@ spendb.controller('DatasetDimensionsCtrl', ['$scope', '$modal', '$http', '$locat
 
 }]);
 ;
-spendb.controller('DatasetEditCtrl', ['$scope', '$document', '$http', '$location', '$q', 'flash', 'reference', 'validation', 'dataset', 'managers', 'session',
-  function($scope, $document, $http, $location, $q, flash, reference, validation, dataset, managers, session) {
+spendb.controller('DatasetEditCtrl', ['$scope', '$document', '$http', '$location', '$q', 'flash', 'reference', 'validation', 'dataset', 'managers', 'session', 'config',
+  function($scope, $document, $http, $location, $q, flash, reference, validation, dataset, managers, session, config) {
   $scope.dataset = dataset;
   $scope.reference = reference;
   $scope.managers = managers;
@@ -762,7 +767,7 @@ spendb.controller('DatasetEditCtrl', ['$scope', '$document', '$http', '$location
   $scope.suggestAccounts = function(query) {
     var dfd = $q.defer(),
         params =  {q: query};
-    $http.get('/api/3/accounts/_complete', {params: params}).then(function(es) {
+    $http.get(config.apiBaseUrl + '/api/3/accounts/_complete', {params: params}).then(function(es) {
       var accounts = []
       for (var i in es.data.results) {
         var account = es.data.results[i],
@@ -967,8 +972,8 @@ spendb.controller('DatasetMeasuresCtrl', ['$scope', '$rootScope', '$http', '$loc
 
 }]);
 ;
-spendb.controller('DatasetNewCtrl', ['$scope', '$rootScope', '$http', '$location', 'slugifyFilter', 'config', 'validation', 'session',
-  function($scope, $rootScope, $http, $location, slugifyFilter, config, validation, session) {
+spendb.controller('DatasetNewCtrl', ['$scope', '$rootScope', '$http', '$location', 'slugifyFilter', 'config', 'validation', 'session', 'config',
+  function($scope, $rootScope, $http, $location, slugifyFilter, config, validation, session, config) {
   var bindSlug = true;
 
   $rootScope.setTitle("Create a new dataset");
@@ -990,7 +995,7 @@ spendb.controller('DatasetNewCtrl', ['$scope', '$rootScope', '$http', '$location
 
   $scope.createDataset = function() {
     validation.clear($scope.forms.dataset);
-    $http.post('/api/3/datasets', $scope.dataset).then(function(res) {
+    $http.post(config.apiBaseUrl + '/api/3/datasets', $scope.dataset).then(function(res) {
       $scope.dataset = res.data;
       $location.search({mode: 'wizard'});
       $location.path('/datasets/' + res.data.name + '/upload');
@@ -1014,9 +1019,9 @@ spendb.controller('DatasetQueryCtrl', ['$scope', '$location', 'dataset', functio
   
 }]);
 ;
-var loadRun = ['$route', '$q', '$http', function($route, $q, $http) {
+var loadRun = ['$route', '$q', '$http', 'config', function($route, $q, $http, config) {
   var p = $route.current.params,
-      url = '/api/3/datasets/' + p.dataset + '/runs/' + p.run;
+      url = config.apiBaseUrl + '/api/3/datasets/' + p.dataset + '/runs/' + p.run;
   return $http.get(url);
 }];
 
@@ -1393,19 +1398,19 @@ spendb.directive('pageHeader', ['$http', '$rootScope', '$route', '$location', '$
   };
 });
 ;
-var loadIndex = ['$q', '$route', '$http', function($q, $route, $http) {
+var loadIndex = ['$q', '$route', '$http', 'config', function($q, $route, $http, config) {
   var dfd = $q.defer();
   // yes that's what baby jesus made APIs for.
-  $http.get('/api/3/pages/index.html').then(function(res) {
+  $http.get(config.apiBaseUrl + '/api/3/pages/index.html').then(function(res) {
     dfd.resolve(res.data);
   });
   return dfd.promise;
 }];
 
 
-var loadIndexDatasets = ['$q', '$http', '$location', '$route', function($q, $http, $location, $route) {
+var loadIndexDatasets = ['$q', '$http', '$location', '$route', 'config', function($q, $http, $location, $route, config) {
   var dfd = $q.defer();
-  $http.get('/api/3/datasets', {params: $location.search()}).then(function(res) {
+  $http.get(config.apiBaseUrl + '/api/3/datasets', {params: $location.search()}).then(function(res) {
     dfd.resolve(res.data);
   });
   return dfd.promise;
@@ -1466,10 +1471,10 @@ spendb.controller('HomeCtrl', ['$scope', '$rootScope', '$location', '$sce', 'pag
 }];
 
 
-var loadDataset = ['$route', '$http', '$q', function($route, $http, $q) {
+var loadDataset = ['$route', '$http', '$q', 'config', function($route, $http, $q, config) {
   var dfd = $q.defer(),
-      url = '/api/3/datasets/' + $route.current.params.dataset,
-      authzUrl = '/api/3/sessions/authz',
+      url = config.apiBaseUrl + '/api/3/datasets/' + $route.current.params.dataset,
+      authzUrl = config.apiBaseUrl + '/api/3/sessions/authz',
       authzParams = {'dataset': $route.current.params.dataset};
   $q.all([
     $http.get(url),
@@ -1485,9 +1490,9 @@ var loadDataset = ['$route', '$http', '$q', function($route, $http, $q) {
 }];
 
 
-var loadManagers = ['$route', '$http', '$q', function($route, $http, $q) {
+var loadManagers = ['$route', '$http', '$q', 'config', function($route, $http, $q, config) {
   var dfd = $q.defer(),
-      url = '/api/3/datasets/' + $route.current.params.dataset + '/managers';
+      url = config.apiBaseUrl + '/api/3/datasets/' + $route.current.params.dataset + '/managers';
   $http.get(url).then(function(res) {
     dfd.resolve(res.data);
   });
@@ -1495,9 +1500,9 @@ var loadManagers = ['$route', '$http', '$q', function($route, $http, $q) {
 }];
 
 
-var loadSources = ['$route', '$http', '$q', function($route, $http, $q) {
+var loadSources = ['$route', '$http', '$q', 'config', function($route, $http, $q, config) {
   var dfd = $q.defer(),
-      url = '/api/3/datasets/' + $route.current.params.dataset + '/sources';
+      url = config.apiBaseUrl + '/api/3/datasets/' + $route.current.params.dataset + '/sources';
   $http.get(url).then(function(res) {
     dfd.resolve(res.data);
   });
@@ -1514,8 +1519,8 @@ var loadReferenceData = ['$q', 'data', function($q, data) {
 }];
 
 
-var loadModel = ['$route', '$q', '$http', function($route, $q, $http) {
-  var url = '/api/3/datasets/' + $route.current.params.dataset,
+var loadModel = ['$route', '$q', '$http', 'config', function($route, $q, $http, config) {
+  var url = config.apiBaseUrl + '/api/3/datasets/' + $route.current.params.dataset,
       dfd = $q.defer();
   $q.all([
     $http.get(url + '/structure'),
@@ -1596,11 +1601,11 @@ spendb.factory('validation', ['flash', 'config', function(flash, config) {
 }]);
 
 
-spendb.factory('data', ['$http', function($http) {
+spendb.factory('data', ['$http', 'config', function($http, config) {
   /* This is used to cache reference data once it has been retrieved from the
   server. Reference data includes the canonical lists of country names,
   currencies, etc. */
-  var referenceData = $http.get('/api/3/reference');
+  var referenceData = $http.get(config.apiBaseUrl + '/api/3/reference');
 
   var getData = function(cb) {
     referenceData.then(function(res) {
@@ -1612,11 +1617,11 @@ spendb.factory('data', ['$http', function($http) {
 }]);
 
 
-spendb.factory('session', ['$http', function($http) {
+spendb.factory('session', ['$http', 'config', function($http, config) {
   var sessionDfd = null;
 
   var logout = function(cb) {
-    $http.post('/api/3/sessions/logout').then(function() {
+    $http.post(config.apiBaseUrl + '/api/3/sessions/logout').then(function() {
       sessionDfd = null;
       get(cb);
     });
@@ -1629,7 +1634,7 @@ spendb.factory('session', ['$http', function($http) {
   var get = function(cb) {
     if (sessionDfd === null) {
       var data = {'_': new Date()}
-      sessionDfd = $http.get('/api/3/sessions', {params: data});
+      sessionDfd = $http.get(config.apiBaseUrl + '/api/3/sessions', {params: data});
     }
     sessionDfd.then(function(res) {
       cb(res.data);
