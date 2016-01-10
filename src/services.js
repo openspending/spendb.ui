@@ -66,11 +66,11 @@ spendb.factory('validation', ['flash', 'config', function(flash, config) {
 }]);
 
 
-spendb.factory('data', ['$http', function($http) {
+spendb.factory('data', ['$http', 'config', function($http, config) {
   /* This is used to cache reference data once it has been retrieved from the
   server. Reference data includes the canonical lists of country names,
   currencies, etc. */
-  var referenceData = $http.get('/api/3/reference');
+  var referenceData = $http.get(config.apiBaseUrl + '/api/3/reference');
 
   var getData = function(cb) {
     referenceData.then(function(res) {
@@ -82,11 +82,11 @@ spendb.factory('data', ['$http', function($http) {
 }]);
 
 
-spendb.factory('session', ['$http', function($http) {
+spendb.factory('session', ['$http', 'config', function($http, config) {
   var sessionDfd = null;
 
   var logout = function(cb) {
-    $http.post('/api/3/sessions/logout').then(function() {
+    $http.post(config.apiBaseUrl + '/api/3/sessions/logout').then(function() {
       sessionDfd = null;
       get(cb);
     });
@@ -99,7 +99,7 @@ spendb.factory('session', ['$http', function($http) {
   var get = function(cb) {
     if (sessionDfd === null) {
       var data = {'_': new Date()}
-      sessionDfd = $http.get('/api/3/sessions', {params: data});
+      sessionDfd = $http.get(config.apiBaseUrl + '/api/3/sessions', {params: data});
     }
     sessionDfd.then(function(res) {
       cb(res.data);

@@ -5,6 +5,11 @@ var spendb = angular.module('spendb', ['spendb.config', 'spendb.templates', 'ngC
                                        'ngFileUpload', 'ui.bootstrap', 'ui.select', 'ngBabbage']);
 
 
+spendb.constant('config', {
+   appName: 'SpenDB',
+   appVersion: 1.0,
+   apiBaseUrl: ''
+});
 spendb.config(['$routeProvider', '$locationProvider',
     function($routeProvider, $locationProvider) {
 
@@ -205,9 +210,9 @@ spendb.controller('AppCtrl', ['$scope', '$rootScope', '$location', '$http', '$co
 }]);
 
 
-var loadPage = ['$q', '$route', '$http', function($q, $route, $http) {
+var loadPage = ['$q', '$route', '$http', 'config', function($q, $route, $http, config) {
   var dfd = $q.defer();
-  $http.get('/api/3/pages/' + $route.current.params.path).then(function(res) {
+  $http.get(config.apiBaseUrl+'/api/3/pages/' + $route.current.params.path).then(function(res) {
     dfd.resolve(res.data);
   });
   return dfd.promise;

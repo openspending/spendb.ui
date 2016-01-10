@@ -1,6 +1,6 @@
 
-spendb.controller('DatasetNewCtrl', ['$scope', '$rootScope', '$http', '$location', 'slugifyFilter', 'config', 'validation', 'session',
-  function($scope, $rootScope, $http, $location, slugifyFilter, config, validation, session) {
+spendb.controller('DatasetNewCtrl', ['$scope', '$rootScope', '$http', '$location', 'slugifyFilter', 'config', 'validation', 'session', 'config',
+  function($scope, $rootScope, $http, $location, slugifyFilter, config, validation, session, config) {
   var bindSlug = true;
 
   $rootScope.setTitle("Create a new dataset");
@@ -22,7 +22,7 @@ spendb.controller('DatasetNewCtrl', ['$scope', '$rootScope', '$http', '$location
 
   $scope.createDataset = function() {
     validation.clear($scope.forms.dataset);
-    $http.post('/api/3/datasets', $scope.dataset).then(function(res) {
+    $http.post(config.apiBaseUrl + '/api/3/datasets', $scope.dataset).then(function(res) {
       $scope.dataset = res.data;
       $location.search({mode: 'wizard'});
       $location.path('/datasets/' + res.data.name + '/upload');

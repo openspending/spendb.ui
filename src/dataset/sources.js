@@ -1,7 +1,7 @@
 
-var loadRun = ['$route', '$q', '$http', function($route, $q, $http) {
+var loadRun = ['$route', '$q', '$http', 'config', function($route, $q, $http, config) {
   var p = $route.current.params,
-      url = '/api/3/datasets/' + p.dataset + '/runs/' + p.run;
+      url = config.apiBaseUrl + '/api/3/datasets/' + p.dataset + '/runs/' + p.run;
   return $http.get(url);
 }];
 

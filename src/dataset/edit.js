@@ -1,6 +1,6 @@
 
-spendb.controller('DatasetEditCtrl', ['$scope', '$document', '$http', '$location', '$q', 'flash', 'reference', 'validation', 'dataset', 'managers', 'session',
-  function($scope, $document, $http, $location, $q, flash, reference, validation, dataset, managers, session) {
+spendb.controller('DatasetEditCtrl', ['$scope', '$document', '$http', '$location', '$q', 'flash', 'reference', 'validation', 'dataset', 'managers', 'session', 'config',
+  function($scope, $document, $http, $location, $q, flash, reference, validation, dataset, managers, session, config) {
   $scope.dataset = dataset;
   $scope.reference = reference;
   $scope.managers = managers;
@@ -10,7 +10,7 @@ spendb.controller('DatasetEditCtrl', ['$scope', '$document', '$http', '$location
   $scope.suggestAccounts = function(query) {
     var dfd = $q.defer(),
         params =  {q: query};
-    $http.get('/api/3/accounts/_complete', {params: params}).then(function(es) {
+    $http.get(config.apiBaseUrl + '/api/3/accounts/_complete', {params: params}).then(function(es) {
       var accounts = []
       for (var i in es.data.results) {
         var account = es.data.results[i],

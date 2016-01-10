@@ -1,8 +1,8 @@
 
-var loadSessionAccount = ['$q', '$http', 'session', function($q, $http, session) {
+var loadSessionAccount = ['$q', '$http', 'session', 'config', function($q, $http, session, config) {
   var dfd = $q.defer();
   session.get(function(s) {
-    $http.get('/api/3/accounts/' + s.user.name).then(function(res) {
+    $http.get(config.apiBaseUrl + '/api/3/accounts/' + s.user.name).then(function(res) {
       dfd.resolve(res.data);
     });
   });

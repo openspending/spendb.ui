@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en" ng-app="spendb">
+<head>
+  <meta charset="utf-8">
+
+  <title>SpenDB</title>
+
+
+    <link href='//fonts.googleapis.com/css?family=Open+Sans:400italic,400,300,600' rel='stylesheet' type='text/css'>
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
+    <link href="build/style.css" rel="stylesheet" />
+  </head>
+  <body ng-controller="AppCtrl">
+    <div id="spinner-overlay" ng-show="showSpinner">
+      <div class="spinner">
+        <i class="fa fa-spinner fa-pulse"></i>
+      </div>
+    </div>
+    <div id="page">
+      <div ng-view></div>
+    </div>
+
+    <div id="catapult-cookie-bar" ng-show="showCookieWarning" ng-cloak>
+      This site uses cookies
+      <button id="catapultCookie" ng-click="hideCookieWarning()">
+        Okay, thanks
+      </button>
+
+      <a href="/docs/tos.html">
+        Find out more
+      </a>
+    </div>
+
+    <footer>
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-md-8">
+            <ul class="footer-links">
+              <li>
+                <a href="/docs/about.html">About</a>
+              </li>
+              <li>
+                <a href="https://github.com/spendb/spendb/wiki/Web-API">Developers</a>
+              </li>
+              <li>
+                <a href="https://github.com/spendb/spendb">Source Code</a>
+              </li>
+              <li>
+                <a href="/docs/contact.html">Contact</a>
+              </li>
+              <li>
+                <a href="/docs/tos.html">Terms &amp; Privacy</a>
+              </li>
+            </ul>
+          </div>
+          <div class="col-md-4">
+            <p>
+              All <a href="http://www.gnu.org/licenses/agpl.html">code</a>,
+              <a href="http://creativecommons.org/licenses/by/3.0/">content</a>
+              and <a href="http://opendatacommons.org/licenses/odbl/">data</a>
+              is openly licensed.
+            </p>
+          </div>
+        </div>
+      </div>
+    </footer>
+  <!--[if lt IE 9]>
+  <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+</head>
+
+<body>
+	<script>
+			var SPENDB_CONFIG = SPENDB_CONFIG || {};
+			SPENDB_CONFIG.site_title = "";
+			SPENDB_CONFIG.site_url = "";
+			SPENDB_CONFIG.localeGroupSeparator = "";
+			SPENDB_CONFIG.localeDecimalSeparator = "";
+			SPENDB_CONFIG.reserved_terms = {};
+  </script>
+  <script src="build/vendor.js"></script>
+  <script src="build/templates.js"></script>
+  <script src="build/app.js"></script>
+</body>
+</html>

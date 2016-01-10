@@ -7,10 +7,10 @@ var loadSession = ['$q', 'session', function($q, session) {
 }];
 
 
-var loadDataset = ['$route', '$http', '$q', function($route, $http, $q) {
+var loadDataset = ['$route', '$http', '$q', 'config', function($route, $http, $q, config) {
   var dfd = $q.defer(),
-      url = '/api/3/datasets/' + $route.current.params.dataset,
-      authzUrl = '/api/3/sessions/authz',
+      url = config.apiBaseUrl + '/api/3/datasets/' + $route.current.params.dataset,
+      authzUrl = config.apiBaseUrl + '/api/3/sessions/authz',
       authzParams = {'dataset': $route.current.params.dataset};
   $q.all([
     $http.get(url),
@@ -26,9 +26,9 @@ var loadDataset = ['$route', '$http', '$q', function($route, $http, $q) {
 }];
 
 
-var loadManagers = ['$route', '$http', '$q', function($route, $http, $q) {
+var loadManagers = ['$route', '$http', '$q', 'config', function($route, $http, $q, config) {
   var dfd = $q.defer(),
-      url = '/api/3/datasets/' + $route.current.params.dataset + '/managers';
+      url = config.apiBaseUrl + '/api/3/datasets/' + $route.current.params.dataset + '/managers';
   $http.get(url).then(function(res) {
     dfd.resolve(res.data);
   });
@@ -36,9 +36,9 @@ var loadManagers = ['$route', '$http', '$q', function($route, $http, $q) {
 }];
 
 
-var loadSources = ['$route', '$http', '$q', function($route, $http, $q) {
+var loadSources = ['$route', '$http', '$q', 'config', function($route, $http, $q, config) {
   var dfd = $q.defer(),
-      url = '/api/3/datasets/' + $route.current.params.dataset + '/sources';
+      url = config.apiBaseUrl + '/api/3/datasets/' + $route.current.params.dataset + '/sources';
   $http.get(url).then(function(res) {
     dfd.resolve(res.data);
   });
@@ -55,8 +55,8 @@ var loadReferenceData = ['$q', 'data', function($q, data) {
 }];
 
 
-var loadModel = ['$route', '$q', '$http', function($route, $q, $http) {
-  var url = '/api/3/datasets/' + $route.current.params.dataset,
+var loadModel = ['$route', '$q', '$http', 'config', function($route, $q, $http, config) {
+  var url = config.apiBaseUrl + '/api/3/datasets/' + $route.current.params.dataset,
       dfd = $q.defer();
   $q.all([
     $http.get(url + '/structure'),
